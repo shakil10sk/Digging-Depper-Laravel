@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\SomeoneCheckedProfile;
 use App\Jobs\SendTestMailJob;
 use App\Mail\SendMarkDownMail;
 use App\Mail\SendTestMail;
@@ -182,4 +183,19 @@ Route::get('/queue',function(){
     // SendTestMailJob::dispatch($user)->delay(now()->addseconds(5));
     echo 'Mail sent';
 
+});
+
+// event
+
+Route::get('/event',function (){
+    $user = User::inRandomOrder()->first();
+
+    // 1st method event global function
+    // event(new SomeoneCheckedProfile($user));
+
+    // 2nd methode declare like job 
+    SomeoneCheckedProfile::dispatch($user);
+    // dd($user);
+
+    echo $user->name . "Your Profile Is checked";
 });

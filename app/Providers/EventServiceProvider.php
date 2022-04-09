@@ -20,7 +20,10 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         SomeoneCheckedProfile::class => [
-            SendProfileCheckedNotification::class
+            SendProfileCheckedNotification::class,
+        ],
+        'App\Events\TestEvent' => [
+            'App\Listeners\TestListener'
         ]
     ];
 

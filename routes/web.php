@@ -1,11 +1,14 @@
 <?php
 
 use App\Events\SomeoneCheckedProfile;
+use App\Events\TestEvent;
+use App\Http\Controllers\PostController;
 use App\Jobs\SendTestMailJob;
 use App\Mail\SendMarkDownMail;
 use App\Mail\SendTestMail;
 use App\Models\Post;
 use App\Models\User;
+use App\Notifications\OrderShippedNotification;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
@@ -33,7 +36,7 @@ Route::get('/test',function () {
 
 // collection
 
-Route::get('/collection',function () {
+// Route::get('/collection',function () {
 
     // $collect = collect([100,1,2,2,3,4,5,6,7,8,9,10]); // generally call collection
     // $collect = collect([1,1,2,2,3,4,5,6,7,8,9,10]); // generally call collection madian
@@ -113,20 +116,20 @@ Route::get('/collection',function () {
     // }
 
 
-    Collection::macro('toUpper', function () {
-        return $this->map(function ($value) {
-            return Str::upper($value);
-        });
-    });
+//     Collection::macro('toUpper', function () {
+//         return $this->map(function ($value) {
+//             return Str::upper($value);
+//         });
+//     });
 
      
-    $collection = collect(['first', 'second']);
+//     $collection = collect(['first', 'second']);
     
-    $upper = $collection->toUpper();
+//     $upper = $collection->toUpper();
 
-    dd($upper);
+//     dd($upper);
 
-});
+// });
 
 // contracts
 
@@ -135,14 +138,14 @@ Route::get('/collection',function () {
 //     dd(Cache::get('name'));
 // });
 
-Route::get('/contrcts',function(Illuminate\Contracts\Cache\Factory $cache){
-    $cache->put('name',"shakil hossains");
-    dd($cache->get('name'));
-});
+// Route::get('/contrcts',function(Illuminate\Contracts\Cache\Factory $cache){
+//     $cache->put('name',"shakil hossains");
+//     dd($cache->get('name'));
+// });
 
 
-Route::get('/mail',function(){
-    $data = ['name' => "Testing for Mail sending Process"];
+// Route::get('/mail',function(){
+//     $data = ['name' => "Testing for Mail sending Process"];
     
     //without view
     // Mail::send([],[],function($msg){
@@ -160,18 +163,18 @@ Route::get('/mail',function(){
     // Mail::to('shakil550sh@gmail.com','new test user')
     //             ->send(new SendTestMail());
     
-    Mail::to('shakil550sh@gmail.com','new test user')
-                ->send(new SendMarkDownMail());
+//     Mail::to('shakil550sh@gmail.com','new test user')
+//                 ->send(new SendMarkDownMail());
 
-    echo "Mail Sent Successfully";
-});
+//     echo "Mail Sent Successfully";
+// });
 
-Route::get('/queue',function(){
+// Route::get('/queue',function(){
 
-    dispatch(function(){
-        Mail::to('shakil550sh@gmail.com','new test user')
-                ->send(new SendMarkDownMail());
-    })->delay(now()->addseconds(5));
+//     dispatch(function(){
+//         Mail::to('shakil550sh@gmail.com','new test user')
+//                 ->send(new SendMarkDownMail());
+//     })->delay(now()->addseconds(5));
 
     // dispatch(new SendTestMailJob())->delay(now()->addseconds(5));
 
@@ -181,21 +184,34 @@ Route::get('/queue',function(){
 
     // $user = User::findOrFail(2);
     // SendTestMailJob::dispatch($user)->delay(now()->addseconds(5));
-    echo 'Mail sent';
+//     echo 'Mail sent';
 
-});
+// });
 
 // event
 
 Route::get('/event',function (){
     $user = User::inRandomOrder()->first();
-
+    // dd($user);
     // 1st method event global function
-    // event(new SomeoneCheckedProfile($user));
+    event(new SomeoneCheckedProfile($user));
 
     // 2nd methode declare like job 
-    SomeoneCheckedProfile::dispatch($user);
+    // \App\Events\SomeoneCheckedProfile::dispatch($user);
     // dd($user);
 
-    echo $user->name . "Your Profile Is checked";
+    echo $user->name . " Your Profile Is checked";
 });
+
+// notifyable
+
+Route::get('/notify',function (){
+
+    $user = User::inRandomOrder()->first();
+
+    // $user->notify(new OrderShippedNotification());
+    $user->notify((new OrderShippedNotification())->delay(10));
+    // event(new SomeoneCheckedProfile($user));
+});
+
+// Route::get('/tv',[PostController::class,'index']);
